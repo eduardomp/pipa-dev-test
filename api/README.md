@@ -12,7 +12,7 @@ Api do desafio
 ## rodando o mongodb com docker
 
 ```
-docker run --name pipa-dev-test -d mongo
+docker run -d --name pipa-dev-test -p 27017:27017 mongo
 
 ```
 
