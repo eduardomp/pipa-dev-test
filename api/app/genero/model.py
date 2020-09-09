@@ -1,4 +1,4 @@
-from .. import settings
+from .. import DOMAIN
 
 schema = {
     'codigo':{
@@ -16,4 +16,4 @@ genero = {
     'schema': schema
 }
 
-settings['DOMAIN']['genero'] = genero
+DOMAIN['genero'] = genero

@@ -1,6 +1,9 @@
-from flask import Blueprint, current_app as app
+from flask import Blueprint
+from .. import BLUEPRINTS
 
-genero_bp = Blueprint('prefix_uri', __name__)
+genero_bp = Blueprint('genero', __name__)
+
+BLUEPRINTS.append(genero_bp)
 
 from . import model
 from . import views
