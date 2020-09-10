@@ -26,13 +26,7 @@ poetry install
 ```
 
 Neste momento todas as dependencias do projeto serão instaladas em um ambiente virtual do python. 
-
-Para rodar o projeto, execute: 
-
-```
-#entre no shell do virtualenv criado pelo poetry
-
-poetry shell
+modulo
 
 # execute a api
 python api.py
