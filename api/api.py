@@ -12,9 +12,9 @@ def register_hooks(api):
         #evita a injecao de codigo malicioso retirando as instrucoes default
         globalsParameter = {'__builtins__' : None}
         #apenas as variaveis api e hook podem ser executadas no contexto dinamico
-        localsParameter = {'api': api, 'hook': hook}
+        localsParameter = {'api': api, f'{hook.__name__}': hook}
         #execucao dinamica para registro dos hooks do Eve
-        exec(f'api.{hook.__name__} += hook',globalsParameter,localsParameter)
+        exec(f'api.{hook.__name__} += {hook.__name__}',globalsParameter,localsParameter)
 
 api = Eve(settings=SETTINGS)
 
