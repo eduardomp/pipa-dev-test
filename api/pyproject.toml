@@ -7,6 +7,9 @@ authors = ["Eduardo Medeiros Pereira <edu.medeirospereira@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.6"
 eve = "^1.1.2"
+apscheduler = "^3.6.3"
+beautifulsoup4 = "^4.9.1"
+requests = "^2.24.0"
 
 [tool.poetry.dev-dependencies]
 

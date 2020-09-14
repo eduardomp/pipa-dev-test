@@ -1,5 +1,7 @@
 from eve import Eve
-from app import DOMAIN, BLUEPRINTS, HOOKS, SETTINGS
+from app import DOMAIN, BLUEPRINTS, HOOKS, SETTINGS, JOBS
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
 
 def register_blueprints(api):
     for blueprint in BLUEPRINTS:
@@ -16,6 +18,33 @@ def register_hooks(api):
         #execucao dinamica para registro dos hooks do Eve
         exec(f'api.{hook.__name__} += {hook.__name__}',globalsParameter,localsParameter)
 
+def register_jobs(api):
+    if JOBS: 
+        print(f'[API][JOBS] {len(JOBS)} Jobs encontrados')
+    
+        #criar o scheduler para agendamento dos jobs
+        scheduler = BackgroundScheduler()
+
+        #itera pelos jobs cadastrados
+        for job in JOBS:
+            jobFunction = job['job']
+            jobName = jobFunction.__name__
+            hourOfExecution = job['hour']
+            print(f'[API][JOBS] Registrando o job {jobName}')
+            
+            if job['executeOnStartup'] == True:
+                print(f'[API][JOBS] Executando o job {jobName} na inicialização conforme configurado...')
+                jobFunction(api)
+            
+            #criar agendamento do job
+            print(f'[API][JOBS] Agendando o job {jobName} para execução todos os dias as {hourOfExecution} ')
+            scheduler.add_job(func=jobFunction,args=[api],trigger="cron", hour=hourOfExecution)
+
+        scheduler.start()
+
+        # Remove o scheduler quando a aplicação for terminada
+        atexit.register(lambda: scheduler.shutdown())
+
 api = Eve(settings=SETTINGS)
 
 #registrando os modulos de forma dinamica
@@ -23,6 +52,9 @@ register_blueprints(api)
 
 #registrando os hooks de forma dinamica
 register_hooks(api)
+
+#registrado os jobs
+register_jobs(api)
 
 if __name__ == '__main__':
     api.run()
