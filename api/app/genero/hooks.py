@@ -17,7 +17,7 @@ def check_genero_existente(items):
         
             raise Conflict("Genero já cadastrado!")
 
-def normaliza_nome_genero(genero):
+def  normaliza_nome_genero(genero):
     """
         Normaliza o nome do genero para string sem espacos no inicio e no final,
         bem como ajuste das iniciais dos termos em maiusculo. 
