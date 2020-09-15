@@ -219,4 +219,6 @@ yarn-error.log
 # don't ignore keep files
 !.keep
 
+poetry.lock
+
 # End of https://www.toptal.com/developers/gitignore/api/python,vuejs,flask,visualstudiocode
