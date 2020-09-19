@@ -6,7 +6,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 def register_blueprints(api):
     if BLUEPRINTS:
         for blueprint in BLUEPRINTS:
-            print(f'[API][MODULO] Registrando o modulo {blueprint.name}')
+            print(f'[API][BLUEPRINT] Registrando o blueprint {blueprint.name}')
             api.register_blueprint(blueprint)
 
 def register_hooks(api):
@@ -29,18 +29,25 @@ def register_jobs(api):
 
         #itera pelos jobs cadastrados
         for job in JOBS:
-            jobFunction = job['job']
+            jobFunction = job.get('job',None)
             jobName = jobFunction.__name__
-            hourOfExecution = job['hour']
+            hourOfExecution = job.get('hour',0) # 00:00 como hora default
+            executeOnStartup = job.get('executeOnStartup', False)
+            executeOnStartupOnly = job.get('executeOnStartupOnly', False)    
+
+            if jobFunction == None:
+                continue
+
             print(f'[API][JOBS] Registrando o job {jobName}')
             
-            if job['executeOnStartup'] == True:
+            if executeOnStartup or executeOnStartupOnly:
                 print(f'[API][JOBS] Executando o job {jobName} na inicialização conforme configurado...')
                 jobFunction(api)
             
             #criar agendamento do job
-            print(f'[API][JOBS] Agendando o job {jobName} para execução todos os dias as {hourOfExecution} ')
-            scheduler.add_job(func=jobFunction,args=[api],trigger="cron", hour=hourOfExecution)
+            if executeOnStartupOnly != True:
+                print(f'[API][JOBS] Agendando o job {jobName} para execução todos os dias as {hourOfExecution} ')
+                scheduler.add_job(func=jobFunction,args=[api],trigger="cron", hour=hourOfExecution)
 
         scheduler.start()
 
