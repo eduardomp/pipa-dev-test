@@ -7,7 +7,7 @@ pais_bp = Blueprint('pais', __name__)
 
 BLUEPRINTS.append(pais_bp)
 
-@pais_bp.route('/pais/iso/<iso>', methods=['GET'])
+@pais_bp.route('/pais/<iso>', methods=['GET'])
 def get_por_iso(iso):
 
     paisCollection = app.data.driver.db['pais']

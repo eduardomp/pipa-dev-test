@@ -6,8 +6,13 @@ schema = {
         'required': True,
         'unique': False
     },
+    'codigo':{
+        'type': 'string',
+        'unique': True
+    },
     'pais': {
         'type': 'string',
+        'required': True,
         'data_relation': {
             'resource': 'pais',
             'field': 'iso',
@@ -16,6 +21,7 @@ schema = {
     },
     'genero': {
         'type': 'string',
+        'required': True,
         'data_relation': {
             'resource': 'genero',
             'field': 'codigo',

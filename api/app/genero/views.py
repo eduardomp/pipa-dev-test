@@ -7,7 +7,7 @@ genero_bp = Blueprint('genero', __name__)
 
 BLUEPRINTS.append(genero_bp)
 
-@genero_bp.route('/genero/codigo/<codigo>', methods=['GET'])
+@genero_bp.route('/genero/<codigo>', methods=['GET'])
 def get_por_codigo(codigo):
 
     generoCollection = app.data.driver.db['genero']

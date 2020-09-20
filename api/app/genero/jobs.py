@@ -38,7 +38,7 @@ def sincronizar_generos(app):
         generos=[]
         #iterar pelos itens, capturar o MBID (Muzic Brains ID) e o nome do genero
         for item in items:
-            codigo = shortuuid.uuid()
+            codigo = "G"+shortuuid.ShortUUID().random(length=10)
             nome = item.find('bdi').get_text().strip().title()
 
             count = generoCollection.count_documents({'nome': nome})

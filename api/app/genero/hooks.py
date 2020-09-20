@@ -27,13 +27,14 @@ def  normaliza_nome_genero(genero):
 
     return genero
 
-def gerar_codigo(genero):
+def gerar_codigo_genero(genero):
     """
-        Gera um uuid curto como codigo interno dos generos
+        Gera um uuid curto (10 caracteres) como codigo interno
+        dos generos, com prefixo 'G'
 
-        ex: 'vytxeTZskVKR7C7WgdSP3d'
+        ex: 'G8DVRViPNRo'
     """
-    genero["codigo"] = shortuuid.uuid()
+    genero["codigo"] = "G"+shortuuid.ShortUUID().random(length=10)
 
     return genero
 
@@ -53,7 +54,7 @@ def on_insert_genero(items):
     
     check_genero_existente(items)
     
-    items = list(map(gerar_codigo, items))
+    items = list(map(gerar_codigo_genero, items))
     
     return items
 
