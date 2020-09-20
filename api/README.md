@@ -18,7 +18,7 @@ docker run -d --name pipa-dev-test -p 27017:27017 mongo
 
 ## Executando a api para desenvolvimento
 
-Acesse o diretorio do projeto api e instale as dependencias utilizando o poetry:
+Acesse o diretorio /api do projeto e instale as dependencias utilizando o poetry:
 
 ```
 poetry install
@@ -26,18 +26,19 @@ poetry install
 ```
 
 Neste momento todas as dependencias do projeto serão instaladas em um ambiente virtual do python. 
-modulo
 
+```
 # execute a api
-python api.py
+poetry run python api.py
 
 ```
 
 O projeto da api estara disponivel em http://localhost:5000
 
+# Dados de acesso a api setlist.fm
 
-
-
-
-
-
+Dados             | Valor
+------------------|------------------------------------------
+Email de contato  |	edu.medeirospereira@gmail.com
+Descrição         |	Test application to new pipa developers
+API Key           | JorcwOqolsbPsFkEAAwkydlKcysTBXfyiuzg
