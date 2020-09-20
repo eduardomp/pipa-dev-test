@@ -18,3 +18,4 @@ SETTINGS = config.settings.get_settings()
 #Import dos modulos, cada modulo define o seu domain, blueprint, testes e o que mais for pertinente ao modulo
 from . import genero
 from . import pais
+from . import banda

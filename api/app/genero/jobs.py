@@ -1,6 +1,7 @@
 from .. import JOBS
 import requests
 from bs4 import BeautifulSoup
+import shortuuid
 
 def sincronizar_generos(app):
     
@@ -37,14 +38,14 @@ def sincronizar_generos(app):
         generos=[]
         #iterar pelos itens, capturar o MBID (Muzic Brains ID) e o nome do genero
         for item in items:
-            mbid = item.find('a').get('href').replace('/genre/','')
-            genero = item.find('bdi').get_text().strip().title()
+            codigo = shortuuid.uuid()
+            nome = item.find('bdi').get_text().strip().title()
 
-            count = generoCollection.count_documents({'codigo': mbid})
+            count = generoCollection.count_documents({'nome': nome})
         
             #inserir o genero caso nao exista
             if count == 0 :    
-                generos.append({"codigo":mbid,"nome":genero})
+                generos.append({"codigo":codigo,"nome":nome})
 
         if generos:
             generoCollection.insert_many(generos)                

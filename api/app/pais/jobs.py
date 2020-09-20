@@ -26,7 +26,7 @@ def cadastrar_paises(app):
         if count == 0 :    
             paisCollection.insert_many(paises)                
             #mensagem de ok
-            print(f"[API][JOB] {count} Paises cadastrados!")
+            print(f"[API][JOB] {len(paises)} Paises cadastrados!")
     
 
 JOBS.append({"job":cadastrar_paises,"executeOnStartupOnly":True})

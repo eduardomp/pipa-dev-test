@@ -1,6 +1,7 @@
 from .. import HOOKS
 from flask import current_app as app
 from werkzeug.exceptions import Conflict
+import shortuuid
 
 def check_genero_existente(items):
     """
@@ -26,6 +27,16 @@ def  normaliza_nome_genero(genero):
 
     return genero
 
+def gerar_codigo(genero):
+    """
+        Gera um uuid curto como codigo interno dos generos
+
+        ex: 'vytxeTZskVKR7C7WgdSP3d'
+    """
+    genero["codigo"] = shortuuid.uuid()
+
+    return genero
+
 def on_insert_genero(items):
     """
         Hook de pre insercao dos generos musicais.
@@ -41,6 +52,8 @@ def on_insert_genero(items):
     items = list(map(normaliza_nome_genero, items))
     
     check_genero_existente(items)
+    
+    items = list(map(gerar_codigo, items))
     
     return items
 
