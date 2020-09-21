@@ -19,3 +19,4 @@ SETTINGS = config.settings.get_settings()
 from . import genero
 from . import pais
 from . import banda
+from . import setlistfm

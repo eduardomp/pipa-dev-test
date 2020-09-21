@@ -22,7 +22,7 @@ def sincronizar_generos(app):
     url = "https://musicbrainz.org/genres"
     
     #requisicao GET a pagina da url
-    req = requests.get(url, headers)
+    req = requests.get(url,headers=headers)
     
     #criando o parser para navegar no DOM da pagina e extrair os valores
     soup = BeautifulSoup(req.content, 'html.parser')
