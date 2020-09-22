@@ -2,21 +2,18 @@
   <div id="app">
     <Menu />
     <Conteudo />
-    <Rodape />
   </div>
 </template>
 
 <script>
 import Menu from './components/layout/Menu'
 import Conteudo from './components/layout/Conteudo'
-import Rodape from './components/layout/Rodape'
 
 export default {
   name: 'App',
   components: {
     Menu,
     Conteudo,
-    Rodape
   }
 }
 </script>
@@ -26,8 +23,11 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: #EB5E28;
+  background: url('~@/assets/background_pipa_dev_test.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 </style>
