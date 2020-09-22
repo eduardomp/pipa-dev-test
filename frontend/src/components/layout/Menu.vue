@@ -1,6 +1,6 @@
 <template>
   <div id="menu">
-    <b-navbar type="dark" variant="dark" sticky=true fixed="top">
+    <b-navbar type="dark" variant="dark">
       <b-navbar-nav align='right'>
         <b-navbar-brand>PipaDevTest</b-navbar-brand>    
         <b-nav-item href="#/">Info</b-nav-item>        
