@@ -11,14 +11,8 @@
   </div>
 </template>
 
-<script>
-  export default {
-  }
-</script>
-
 <style>
   #menu {
-   color: #EB5E28; 
    border-bottom: 0.1em solid whitesmoke; 
   }
 </style>
