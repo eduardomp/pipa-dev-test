@@ -11,7 +11,32 @@
     </div>
 
     <div class="row mt-50">
-      <div class="col-sm">
+
+       <div class="col-sm d-flex justify-content-start">
+        <b-form-group
+          label=""
+          label-cols-sm="0"
+          label-size="sm"
+          label-for="filterInput"
+          class="mb-0"
+        >
+          <b-input-group size="sm">
+            <b-form-input
+              v-model="filter"
+              type="search"
+              id="filterInput"
+              placeholder="Procurar por..."
+              :formatter="searchFormatter"
+            ></b-form-input>
+            <b-input-group-append>
+              <b-button :disabled="!filter" @click="filter = ''">Limpar</b-button>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+       </div>
+
+
+      <div class="col-sm-12 mt-10">
         <b-table
           ref="table"
           striped
@@ -21,7 +46,7 @@
           :fields="fields"
           :items="items"
           :busy="isBusy"
-
+          :filter="filter"
           selectable 
           select-mode="single"
           @row-selected="handleSelectItem"
@@ -98,6 +123,7 @@
           { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
           { age: 38, first_name: 'Jami', last_name: 'Carney' },
         ],
+        filter: '',
         isBusy: false,
         selected: [],
         currentPage: 1,
@@ -105,6 +131,10 @@
       }
     },
     methods: {
+      searchFormatter(value) {
+        console.log("valor da busca",value);
+        return value;
+      },
       handleSelectItem(item) {
         this.selected = item;
         this.showModal();
@@ -136,5 +166,9 @@
 <style>
   .mt-50 {
     margin-top:50px;
+  }
+
+  .mt-10 {
+    margin-top:10px;
   }
 </style>
