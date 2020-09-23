@@ -6,7 +6,7 @@
         <h1>Generos</h1>
       </div>
       <div class="col-sm d-flex justify-content-end">
-        <b-button size="lg" variant="dark" @click="addNew">Adicionar Novo</b-button>
+        <b-button size="lg" variant="dark" @click="addNew">Adicionar Novo Genero</b-button>
       </div>
     </div>
 
