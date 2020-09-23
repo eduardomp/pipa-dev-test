@@ -70,6 +70,7 @@
           align="fill"
           size="sm"
           @change="changePage"
+          :disabled="paginationDisabled"
         ></b-pagination>
       </div>
     </div>
@@ -128,6 +129,7 @@
         selected: [],
         currentPage: 1,
         totalItems: 20,
+        paginationDisabled: false 
       }
     },
     methods: {
