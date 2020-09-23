@@ -6,7 +6,7 @@
         <h1>Generos</h1>
       </div>
       <div class="col-sm d-flex justify-content-end">
-        <b-button size="lg" variant="dark" @click="showModal">Adicionar Novo</b-button>
+        <b-button size="lg" variant="dark" @click="addNew">Adicionar Novo</b-button>
       </div>
     </div>
 
@@ -139,6 +139,10 @@
         this.selected = item;
         this.showModal();
       },
+      addNew(){
+        this.selected = [];
+        this.showModal();
+      },
       showModal() {
         this.$refs['modal-crud'].show()
       },
@@ -153,7 +157,6 @@
       },
       cancelar(){
         console.log('cancelar...');
-        this.selected = [];
         this.hideModal();
       },
       changePage(page) {
