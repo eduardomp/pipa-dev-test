@@ -40,10 +40,11 @@
       <div class="col-sm d-flex justify-content-end">
         <b-pagination
           v-model="currentPage"
-          total-rows="20"
+          :total-rows="totalItems"
           per-page="10"
           align="fill"
           size="sm"
+          @change="changePage"
         ></b-pagination>
       </div>
     </div>
@@ -100,6 +101,7 @@
         isBusy: false,
         selected: [],
         currentPage: 1,
+        totalItems: 20,
       }
     },
     methods: {
@@ -123,6 +125,9 @@
         console.log('cancelar...');
         this.selected = [];
         this.hideModal();
+      },
+      changePage(page) {
+        console.log('Page selected:',page);
       }
     }
   }
