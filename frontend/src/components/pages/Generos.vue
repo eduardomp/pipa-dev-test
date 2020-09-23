@@ -12,13 +12,26 @@
 
     <div class="row mt-50">
       <div class="col-sm">
-        <b-table 
+        <b-table
+          ref="table"
           striped
           hover
           dark
           small
+          :fields="fields"
           :items="items"
+          :busy="isBusy"
+
+          selectable 
+          select-mode="single"
+          @row-selected="handleSelectItem"
           >
+            <template v-slot:table-busy>
+              <div class="text-center text-danger my-2">
+                <b-spinner class="align-middle"></b-spinner>
+                <strong>Carregando...</strong>
+              </div>
+            </template>
         </b-table>
       </div>
     </div>
@@ -44,13 +57,11 @@
         footer-bg-variant="dark"
         header-text-variant="light"
         body-text-variant="light"
-        footer-text-variant="light"
-        @ok="salvar"
         @cancel="excluir"
         @hide="cancelar"
         >
       
-        <p>Conteudo da modal...</p>
+        <p>{{ (selected.length > 0)? selected[0].first_name:''}}</p>
       
         <template v-slot:modal-footer="{ ok, cancel, hide }">
           <b-button size="sm" variant="success" @click="ok()">
@@ -65,7 +76,6 @@
         </template>
       </b-modal>
     </div>
-    
 
   </div>
 </template>
@@ -74,6 +84,7 @@
  export default {
     data() {
       return {
+        fields:['first_name'],
         items: [
           { age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
           { age: 21, first_name: 'Larsen', last_name: 'Shaw' },
@@ -86,10 +97,16 @@
           { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
           { age: 38, first_name: 'Jami', last_name: 'Carney' },
         ],
-        currentPage: 1
+        isBusy: false,
+        selected: [],
+        currentPage: 1,
       }
     },
     methods: {
+      handleSelectItem(item) {
+        this.selected = item;
+        this.showModal();
+      },
       showModal() {
         this.$refs['modal-crud'].show()
       },
@@ -104,7 +121,8 @@
       },
       cancelar(){
         console.log('cancelar...');
-        this.$refs['modal-crud'].hide()
+        this.selected = [];
+        this.hideModal();
       }
     }
   }
@@ -114,4 +132,4 @@
   .mt-50 {
     margin-top:50px;
   }
-</style>salvar
+</style>
