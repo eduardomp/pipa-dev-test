@@ -112,20 +112,11 @@
 
  const API_URL = 'http://localhost:5000/genero'; 
 
+  
+
  export default {
     mounted () {
-      
-      this.isBusy = true;
-
-      axios
-      .get(`${API_URL}?max_results=10&page=1`)
-      .then(response => {
-        this.items = response.data._items
-      })
-      .catch(error => {
-        console.log(error)
-      })
-      .finally(() => this.isBusy = false)
+      this.getItemsByPageNumber(1);
     },
     data() {
       return {
@@ -140,6 +131,23 @@
       }
     },
     methods: {
+      getItemsByPageNumber(page) {
+        this.isBusy = true;
+
+        axios
+        .get(`${API_URL}?max_results=10&page=${page}`)
+        .then(response => {
+          this.items = response.data._items;
+          this.totalItems = response.data._meta.total;
+        })
+        .catch(error => {
+          console.log(error)
+        })
+        .finally(() => {
+          this.isBusy = false
+        })
+
+      },
       searchFormatter(value) {
         console.log("valor da busca",value);
         return value;
@@ -170,6 +178,7 @@
       },
       changePage(page) {
         console.log('Page selected:',page);
+        this.getItemsByPageNumber(page);
       }
     }
   }
