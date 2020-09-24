@@ -108,25 +108,29 @@
 </template>
 
 <script>
+ import axios from 'axios';
+
+ const API_URL = 'http://localhost:5000/genero'; 
+
  export default {
     mounted () {
-      console.log('componenete de pagina iniciado')
+      
+      this.isBusy = true;
+
+      axios
+      .get(`${API_URL}?max_results=10&page=1`)
+      .then(response => {
+        this.items = response.data._items
+      })
+      .catch(error => {
+        console.log(error)
+      })
+      .finally(() => this.isBusy = false)
     },
     data() {
       return {
-        fields:['first_name'],
-        items: [
-          { age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
-          { age: 21, first_name: 'Larsen', last_name: 'Shaw' },
-          { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
-          { age: 38, first_name: 'Jami', last_name: 'Carney' },
-          { age: 40, first_name: 'Dickerson', last_name: 'Madonald' },
-          { age: 21, first_name: 'Larsen', last_name: 'Shaw' },
-          { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
-          { age: 38, first_name: 'Jami', last_name: 'Carney' },
-          { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
-          { age: 38, first_name: 'Jami', last_name: 'Carney' },
-        ],
+        fields:['codigo','nome'],
+        items: [],
         filter: '',
         isBusy: false,
         selected: [],
