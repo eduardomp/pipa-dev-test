@@ -109,6 +109,9 @@
 
 <script>
  export default {
+    mounted () {
+      console.log('componenete de pagina iniciado')
+    },
     data() {
       return {
         fields:['first_name'],

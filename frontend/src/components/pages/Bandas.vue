@@ -108,6 +108,9 @@
 
 <script>
  export default {
+    mounted () {
+      console.log('componenete de pagina')
+    },
     data() {
       return {
         fields:['first_name'],
@@ -175,4 +178,6 @@
   .mt-10 {
     margin-top:10px;
   }
-</style>
+</style>ready: function () {
+    this.onLoad('message from child!')
+  }
