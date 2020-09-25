@@ -9,6 +9,7 @@ __default_settings = {
     'ITEM_METHODS': ['GET', 'PATCH', 'PUT', 'DELETE'],
     'X_DOMAINS': '*',
     'X_HEADERS': ['Authorization','Content-type','Access-Control-Allow-Origin'],
+    'MONGO_QUERY_BLACKLIST': ['$where'],
     'DOMAIN': DOMAIN
 }
 
@@ -22,6 +23,7 @@ __prod_settings = {
     'ITEM_METHODS': ['GET', 'PATCH', 'PUT', 'DELETE'],
     'X_DOMAINS': '*',
     'X_HEADERS': ['Authorization','Content-type','Access-Control-Allow-Origin'],
+    'MONGO_QUERY_BLACKLIST': ['$where'],
     'DOMAIN': DOMAIN
 }
 

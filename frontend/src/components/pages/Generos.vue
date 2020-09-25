@@ -12,7 +12,7 @@
 
     <div class="row mt-50">
 
-       <div class="col-sm d-flex justify-content-start">
+       <div class="col-sm-6 d-flex justify-content-start">
         <b-form-group
           label=""
           label-cols-sm="0"
@@ -25,16 +25,15 @@
               v-model="filter"
               type="search"
               id="filterInput"
-              placeholder="Procurar por..."
-              :formatter="searchFormatter"
+              placeholder="Busque por... "
+              @keyup="handleSearch"
             ></b-form-input>
             <b-input-group-append>
-              <b-button :disabled="!filter" @click="filter = ''">Limpar</b-button>
+              <b-button :disabled="!filter" @click="clearSearch">Limpar</b-button>
             </b-input-group-append>
           </b-input-group>
         </b-form-group>
        </div>
-
 
       <div class="col-sm-12 mt-10">
         <b-table
@@ -112,8 +111,6 @@
 
  const API_URL = 'http://localhost:5000/genero'; 
 
-  
-
  export default {
     mounted () {
       this.getItemsByPageNumber(1);
@@ -126,31 +123,52 @@
         isBusy: false,
         selected: [],
         currentPage: 1,
-        totalItems: 20,
+        totalItems: 0,
         paginationDisabled: false 
       }
     },
     methods: {
-      getItemsByPageNumber(page) {
+      getItems(queryString) {
         this.isBusy = true;
 
         axios
-        .get(`${API_URL}?max_results=10&page=${page}`)
-        .then(response => {
-          this.items = response.data._items;
-          this.totalItems = response.data._meta.total;
-        })
-        .catch(error => {
-          console.log(error)
-        })
-        .finally(() => {
-          this.isBusy = false
-        })
-
+          .get(`${API_URL}?max_results=10&${queryString}`)
+          .then(response => {
+            this.items = response.data._items;
+            this.totalItems = response.data._meta.total;
+          })
+          .catch(error => {
+            console.log(error)
+          })
+          .finally(() => {
+            this.isBusy = false;
+            (this.items.length === 0)? this.paginationDisabled = true : this.paginationDisabled = false;
+          })
       },
-      searchFormatter(value) {
-        console.log("valor da busca",value);
-        return value;
+      getItemsByPageNumber(page) {
+        this.getItems(`page=${page}`);
+      },
+      clearSearch() {
+        this.filter = '';
+        this.getItemsByPageNumber(1);  
+      },
+      handleSearch($event) {
+        if($event.code === "Enter"){
+          
+          if($event.target.value){
+            
+            let term = $event.target.value;
+            
+            let querystring = `page=1&max_results=10&where={"$or":[{"codigo":"${term}"},{"nome":{"$regex":".*${term}.*","$options":"i"}}]}`;
+          
+            this.getItems(querystring);
+         
+            return;
+          }
+         
+         this.getItemsByPageNumber(1);
+
+        }
       },
       handleSelectItem(item) {
         this.selected = item;
