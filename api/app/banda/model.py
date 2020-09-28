@@ -11,20 +11,20 @@ schema = {
         'unique': True
     },
     'pais': {
-        'type': 'string',
+        'type': 'objectid',
         'required': True,
         'data_relation': {
             'resource': 'pais',
-            'field': 'iso',
+            'field': '_id',
             'embeddable': True,
         },
     },
     'genero': {
-        'type': 'string',
+        'type': 'objectid',
         'required': True,
         'data_relation': {
             'resource': 'genero',
-            'field': 'codigo',
+            'field': '_id',
             'embeddable': True,
         },
     },

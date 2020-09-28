@@ -25,7 +25,7 @@
               v-model="filter"
               type="search"
               id="filterInput"
-              placeholder="Busque por... "
+              placeholder="Busque por... + ENTER"
               @keyup="handleSearch"
             ></b-form-input>
             <b-input-group-append>
@@ -56,6 +56,15 @@
                 <strong>Carregando...</strong>
               </div>
             </template>
+
+              <template v-slot:cell(genero)="data">
+                {{ data.item.genero.nome }}
+              </template>
+
+              <template v-slot:cell(pais)="data">
+                {{ data.item.pais.nome }}
+              </template>
+
         </b-table>
       </div>
     </div>
@@ -89,7 +98,38 @@
         >
       
           <form id="form-crud">
-            <input id="nome" type="text" v-model="nome" placeholder="Insira o nome da banda..."/> 
+            <div class="row mt-10">
+              <div class="col-sm-12">
+                <input id="nome" type="text" v-model="nome" placeholder="Insira o nome da banda..." required/> 
+              </div>
+            </div>
+
+            <div class="row mt-10">
+              <div class="col-sm-12">
+                <template>
+                  <b-form-input placeholder="Insira o genero" v-model="genero" list="generos-datalist" debounce="500" @keyup="searchGenero"></b-form-input>
+
+                  <datalist id="generos-datalist">
+                    <option v-for="genero in generos" v-bind:key="genero.value">{{ genero.text }}</option>
+                  </datalist>
+
+                </template>
+              </div>
+            </div>
+
+            <div class="row mt-10">
+              <div class="col-sm-12">
+                <template>
+                  <b-form-input placeholder="Insira o país" v-model="pais" list="paises-datalist" debounce="500" @keyup="searchPais"></b-form-input>
+
+                  <datalist id="paises-datalist">
+                    <option v-for="pais in paises" v-bind:key="pais.value">{{ pais.text }}</option>
+                  </datalist>
+
+                </template>
+              </div>
+            </div>
+            
           </form>
       
         <template v-slot:modal-footer="{ ok, cancel, close }">
@@ -112,10 +152,17 @@
 <script>
  import axios from 'axios';
 
- const API_URL = 'http://localhost:5000/banda'; 
+ const BASE_URL = 'http://localhost:5000'; 
+ const DOMAIN = '/banda'; 
+ const API_URL = `${BASE_URL}${DOMAIN}`; 
+ 
+ const GENERO = '/genero';
+ const PAIS = '/pais';
 
  export default {
     mounted () {
+      this.loadGeneros();
+      this.loadPaises();
       this.getItemsByPageNumber(1);
     },
     data() {
@@ -125,18 +172,86 @@
         filter: '',
         isBusy: false,
         nome:"",
+        genero:"",
+        pais:"",
         selected: [{"nome":"","genero":"","pais":""}],
+        generos:[],
+        paises:[],
         currentPage: 1,
         totalItems: 0,
         paginationDisabled: false 
       }
     },
     methods: {
+      searchGenero($event) {
+          if($event.target.value && $event.target.value.length > 3){
+            
+            this.generos = [];
+
+            let term = $event.target.value;
+            
+            let querystring = `page=1&max_results=30&where={"$or":[{"codigo":"${term}"},{"nome":{"$regex":".*${term}.*","$options":"i"}}]}`;
+          
+            axios
+              .get(`${BASE_URL}${GENERO}?${querystring}`)
+              .then(response => {
+                response.data._items.forEach(element => {
+                  this.generos.push({"value":element._id,"text":element.nome});
+                });
+              });
+          }
+      },
+      searchPais($event) {
+          if($event.target.value && $event.target.value.length > 3){
+            
+            this.paises = [];
+
+            let term = $event.target.value;
+            
+            let querystring = `page=1&max_results=30&where={"$or":[{"iso":"${term}"},{"nome":{"$regex":".*${term}.*","$options":"i"}}]}`;
+          
+            axios
+              .get(`${BASE_URL}${PAIS}?${querystring}`)
+              .then(response => {
+                response.data._items.forEach(element => {
+                  this.paises.push({"value":element._id,"text":element.nome});
+                });
+              });
+          }
+      },
+      loadGeneros() {
+        axios
+        .get(`${BASE_URL}${GENERO}?max_results=1000`)
+        .then(response => {
+            response.data._items.forEach(element => {
+              this.generos.push({"value":element._id,"text":element.nome});  
+            });
+          })
+          .catch(error => {
+            console.log(error)
+            this.showError(`Erro ao recuperar generos!`)
+          })
+      },
+      loadPaises() {
+        axios
+        .get(`${BASE_URL}${PAIS}?max_results=1000`)
+        .then(response => {
+            response.data._items.forEach(element => {
+              this.paises.push({"value":element._id,"text":element.nome});  
+            });
+          })
+          .catch(error => {
+            console.log(error)
+            this.showError(`Erro ao recuperar paises!`)
+          })
+      },
       getItems(queryString) {
         this.isBusy = true;
 
+        let embedded = `&embedded={"pais":1,"genero":1}`;
+
         axios
-          .get(`${API_URL}?max_results=10&${queryString}`)
+          .get(`${API_URL}?max_results=10${embedded}&${queryString}`)
           .then(response => {
             this.items = response.data._items;
             this.totalItems = response.data._meta.total;
@@ -180,8 +295,8 @@
         if(item && item.length > 0){
           this.selected = item;
           this.nome = this.selected[0]?.nome;
-          this.genero = this.selected[0]?.genero;
-          this.pais = this.selected[0]?.pais;
+          this.genero = this.selected[0]?.genero.nome;
+          this.pais = this.selected[0]?.pais.nome;
           this.showModal();
         }
       },
@@ -199,9 +314,13 @@
         this.$bvModal.show("modal-crud");
       },
       salvar(){
+
+        let _genero = this.generos.find(genero => genero.text === this.genero);
+        let _pais = this.paises.find(pais => pais.text === this.pais);
+
         if(this.selected && this.selected.length > 0 && this.selected[0].codigo){
           axios
-          .patch(`${API_URL}/${this.selected[0]._id}`,{"nome":this.nome,"genero":this.genero,"pais":this.pais},{headers:{"If-Match":this.selected[0]._etag}})
+          .patch(`${API_URL}/${this.selected[0]._id}`,{"nome":this.nome,"genero":_genero.value,"pais":_pais.value},{headers:{"If-Match":this.selected[0]._etag}})
           .then(response => {
             console.log(response);
             this.showSuccess(`Banda atualizada!`);
@@ -211,14 +330,14 @@
             this.showError(`Erro ao atualizar!`);
           })
           .finally(() => {
-            this.getItemsByPageNumber(1);
+            setTimeout(()=>this.getItemsByPageNumber(1),500);
           })
  
           return;
         }
         
         axios
-          .post(`${API_URL}`,{"nome":this.nome,"genero":this.genero,"pais":this.pais})
+          .post(`${API_URL}`,{"nome":this.nome,"genero":_genero.value,"pais":_pais.value})
           .then(response => {
             console.log(response);
             this.showSuccess(`Banda ${this.nome} cadastrada!`);
@@ -228,7 +347,7 @@
             this.showError(`Erro ao cadastrar ${this.nome}`);
           })
           .finally(() => {
-            this.getItemsByPageNumber(1);
+            setTimeout(()=>this.getItemsByPageNumber(1),500);
           })
 
       },
@@ -280,5 +399,5 @@
   #form-crud input {
     width: 100%;
   }
-  
+
 </style>

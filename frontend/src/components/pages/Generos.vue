@@ -25,7 +25,7 @@
               v-model="filter"
               type="search"
               id="filterInput"
-              placeholder="Busque por... "
+              placeholder="Busque por... + ENTER"
               @keyup="handleSearch"
             ></b-form-input>
             <b-input-group-append>
@@ -276,5 +276,5 @@
   #form-crud input {
     width: 100%;
   }
-  
+
 </style>
