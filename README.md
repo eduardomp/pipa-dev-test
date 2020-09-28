@@ -1,19 +1,44 @@
-# pipa-dev-test
+# Api
 
-Repositorio do projeto de avaliação de novos desenvolvedores proposto pela pipavida.com
+Api do desafio 
 
-## Especificações
+## Pré requisitos
 
-A aplicação deve gerenciar informações de bandas e catalogar suas apresentações, integrando com a api setlist.fm
+- python 3.6+ 
+- mongodb 
+- poetry (dependency management)
+- docker (opcional)
 
-## Estrutura do projeto
+## rodando o mongodb com docker
 
-### Api REST
+```
+docker run -d --name pipa-dev-test -p 27017:27017 mongo
 
-Aplicação de backend, desenvolvida em python 3, utilizando os frameworks/bibliotecas
+```
 
-## TODO continuar...
+## Executando a api para desenvolvimento
 
+Acesse o diretorio /api do projeto e instale as dependencias utilizando o poetry:
 
+```
+poetry install
 
+```
 
+Neste momento todas as dependencias do projeto serão instaladas em um ambiente virtual do python. 
+
+```
+# execute a api
+poetry run python api.py
+
+```
+
+O projeto da api estara disponivel em http://localhost:5000
+
+# Dados de acesso a api setlist.fm
+
+Dados             | Valor
+------------------|------------------------------------------
+Email de contato  |	edu.medeirospereira@gmail.com
+Descrição         |	Test application to new pipa developers
+API Key           | JorcwOqolsbPsFkEAAwkydlKcysTBXfyiuzg

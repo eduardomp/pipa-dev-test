@@ -1,3 +1,16 @@
+
+# Repositorio do projeto, desafio vida segura
+
+Estrutura do repositorio
+
+```
+.
+├── api        # Diretorio contendo a api do projeto
+├── frontend   # Diretorio contendo o frontend
+└── README.md
+
+```
+
 # Api
 
 Api do desafio 
