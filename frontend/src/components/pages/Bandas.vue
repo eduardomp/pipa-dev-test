@@ -3,7 +3,7 @@
     
     <div class="row mt-50">
       <div class="col-sm">
-        <h1>Bandas</h1>
+        <h1 class="titulo">Bandas</h1>
       </div>
       <div class="col-sm d-flex justify-content-end">
         <b-button size="lg" variant="dark" @click="addNew">Adicionar Nova Banda</b-button>
@@ -398,6 +398,11 @@
 
   #form-crud input {
     width: 100%;
+  }
+
+  .titulo {
+    color: orange;
+    font-weight: bold;
   }
 
 </style>
