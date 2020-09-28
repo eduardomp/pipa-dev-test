@@ -3,7 +3,14 @@
   
       <div class="row mt-50">
         <div class="col-sm-12">
-          <h1 class="titulo">Contagem de bandas por país</h1>
+          <h1 class="titulo">Informações Gerais</h1>
+        </div>
+        <hr/>
+      </div>
+
+      <div class="row mt-50">
+        <div class="col-sm-12">
+          <h2 class="titulo">Contagem de bandas por país</h2>
         </div>
         <div class="col-sm-12">
           aqui
@@ -15,7 +22,7 @@
       <div class="row mt-50">
         
         <div class="col-sm-12">
-          <h1 class="titulo">Bandas por genero</h1>
+          <h2 class="titulo">Bandas por genero</h2>
         </div>
         
         <div class="col-sm-12">
@@ -59,7 +66,7 @@
       
       <div class="row mt-50">
         <div class="col-sm-12">
-          <h1 class="titulo">Bandas por país</h1>
+          <h2 class="titulo">Bandas por país</h2>
         </div>
         <div class="col-sm-12">
           <template>
@@ -110,6 +117,7 @@
   const BASE_URL = 'http://localhost:5000'; 
   const GENERO = '/genero';
   const PAIS = '/pais';
+  const BANDA = '/banda';
 
   export default {
    mounted () {
@@ -134,6 +142,11 @@
       searchGenero($event) {
           if($event.target.value && $event.target.value.length > 3){
             
+            if($event.code === "Enter"){
+              this.loadTableGenero();
+              return;
+            } 
+
             this.generos = [];
 
             let term = $event.target.value;
@@ -151,6 +164,11 @@
       },
       searchPais($event) {
           if($event.target.value && $event.target.value.length > 3){
+            
+            if($event.code === "Enter"){
+              this.loadTablePaises();
+              return;
+            }
             
             this.paises = [];
 
@@ -193,6 +211,49 @@
             this.showError(`Erro ao recuperar paises!`)
           })
       },
+      loadTablePaises() {
+        
+        this.isBusyPorPais = true;
+
+        let _pais = this.paises.find(pais => pais.text === this.pais);
+
+        let embedded = `&embedded={"genero":1}`;
+        
+        let querystring = `&where={"pais":"${_pais.value}"}`
+
+        axios
+          .get(`${BASE_URL}${BANDA}?max_results=10${embedded}${querystring}`)
+          .then(response => {
+            this.itemsPorPais = response.data._items;
+          })
+          .catch(error => {
+            console.log(error)
+          })
+          .finally(() => {
+            this.isBusyPorPais = false;
+          })
+      },
+      loadTableGenero() {
+        this.isBusyPorGenero = true;
+
+        let _genero = this.generos.find(genero => genero.text === this.genero);
+
+        let embedded = `&embedded={"pais":1}`;
+        
+        let querystring = `&where={"genero":"${_genero.value}"}`
+
+        axios
+          .get(`${BASE_URL}${BANDA}?max_results=10${embedded}${querystring}`)
+          .then(response => {
+            this.itemsPorGenero = response.data._items;
+          })
+          .catch(error => {
+            console.log(error)
+          })
+          .finally(() => {
+            this.isBusyPorGenero = false;
+          })
+      }
     }
   }
 </script>
