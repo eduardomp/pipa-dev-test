@@ -8,7 +8,7 @@ __default_settings = {
     'RESOURCE_METHODS': ['GET', 'POST', 'DELETE'],
     'ITEM_METHODS': ['GET', 'PATCH', 'PUT', 'DELETE'],
     'X_DOMAINS': '*',
-    'X_HEADERS': ['Authorization','Content-type','Access-Control-Allow-Origin'],
+    'X_HEADERS': ['Authorization','Content-type','Access-Control-Allow-Origin','If-Match'],
     'MONGO_QUERY_BLACKLIST': ['$where'],
     'DOMAIN': DOMAIN
 }
@@ -22,7 +22,7 @@ __prod_settings = {
     'RESOURCE_METHODS': ['GET', 'POST', 'DELETE'],
     'ITEM_METHODS': ['GET', 'PATCH', 'PUT', 'DELETE'],
     'X_DOMAINS': '*',
-    'X_HEADERS': ['Authorization','Content-type','Access-Control-Allow-Origin'],
+    'X_HEADERS': ['Authorization','Content-type','Access-Control-Allow-Origin','If-Match'],
     'MONGO_QUERY_BLACKLIST': ['$where'],
     'DOMAIN': DOMAIN
 }

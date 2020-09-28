@@ -76,27 +76,31 @@
 
     <div>
       <b-modal 
-        ref="modal-crud"
+        id="modal-crud"
         title="Genero"
         header-bg-variant="dark"
         body-bg-variant="dark"
         footer-bg-variant="dark"
         header-text-variant="light"
         body-text-variant="light"
+        @ok="salvar"
         @cancel="excluir"
-        @hide="cancelar"
+        @hide="handleHideModal"
         >
       
-        <p>{{ (selected.length > 0)? selected[0].first_name:''}}</p>
+          <form id="form-crud">
+            <label for="nome"/>
+            <input id="nome" type="text" v-model="nome"/> 
+          </form>
       
-        <template v-slot:modal-footer="{ ok, cancel, hide }">
-          <b-button size="sm" variant="success" @click="ok()">
+        <template v-slot:modal-footer="{ ok, cancel, close }">
+          <b-button size="sm" variant="success" @click="ok">
             Salvar
           </b-button>
-          <b-button size="sm" variant="danger" @click="cancel()">
+          <b-button size="sm" variant="danger" @click="cancel">
             Excluir
           </b-button>
-          <b-button size="sm" variant="secondary" @click="hide()">
+          <b-button size="sm" variant="secondary" @click="close">
             Cancelar
           </b-button>
         </template>
@@ -121,7 +125,8 @@
         items: [],
         filter: '',
         isBusy: false,
-        selected: [],
+        nome:"",
+        selected: [{"nome":""}],
         currentPage: 1,
         totalItems: 0,
         paginationDisabled: false 
@@ -136,6 +141,7 @@
           .then(response => {
             this.items = response.data._items;
             this.totalItems = response.data._meta.total;
+            console.log(this.items)
           })
           .catch(error => {
             console.log(error)
@@ -171,28 +177,57 @@
         }
       },
       handleSelectItem(item) {
-        this.selected = item;
-        this.showModal();
+        if(item && item.length > 0){
+          console.log("selected",item);
+          this.selected = item;
+          this.nome = this.selected[0]?.nome;
+          this.showModal();
+        }
+      },
+      handleHideModal() {
+        this.$refs.table.clearSelected();
       },
       addNew(){
+        this.nome = "";
         this.selected = [];
         this.showModal();
       },
       showModal() {
-        this.$refs['modal-crud'].show()
-      },
-      hideModal() {
-        this.$refs['modal-crud'].hide()
+        this.$bvModal.show("modal-crud");
       },
       salvar(){
-        console.log('salvar...');
+        if(this.selected && this.selected.length > 0 && this.selected[0].codigo){
+          console.log("UPDATE");
+          axios
+          .patch(`${API_URL}/${this.selected[0]._id}`,{"nome":this.nome},{headers:{"If-Match":this.selected[0]._etag}})
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error)
+          })
+          .finally(() => {
+            this.getItemsByPageNumber(1);
+          })
+ 
+          return;
+        }
+        
+        axios
+          .post(`${API_URL}`,{"nome":this.nome})
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error)
+          })
+          .finally(() => {
+            this.getItemsByPageNumber(1);
+          })
+
       },
       excluir(){
         console.log('excluir...');
-      },
-      cancelar(){
-        console.log('cancelar...');
-        this.hideModal();
       },
       changePage(page) {
         console.log('Page selected:',page);
