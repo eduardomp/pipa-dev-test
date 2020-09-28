@@ -141,10 +141,10 @@
           .then(response => {
             this.items = response.data._items;
             this.totalItems = response.data._meta.total;
-            console.log(this.items)
           })
           .catch(error => {
             console.log(error)
+            this.showError(`Erro ao recuperar generos!`)
           })
           .finally(() => {
             this.isBusy = false;
@@ -201,9 +201,11 @@
           .patch(`${API_URL}/${this.selected[0]._id}`,{"nome":this.nome},{headers:{"If-Match":this.selected[0]._etag}})
           .then(response => {
             console.log(response);
+            this.showSuccess(`Genero atualizado!`);
           })
           .catch(error => {
             console.log(error)
+            this.showError(`Erro ao atualizar!`);
           })
           .finally(() => {
             this.getItemsByPageNumber(1);
@@ -216,9 +218,11 @@
           .post(`${API_URL}`,{"nome":this.nome})
           .then(response => {
             console.log(response);
+            this.showSuccess(`Genero ${this.nome} cadastrado!`);
           })
           .catch(error => {
             console.log(error)
+            this.showError(`Erro ao cadastrar ${this.nome}`);
           })
           .finally(() => {
             this.getItemsByPageNumber(1);
@@ -230,9 +234,11 @@
           .delete(`${API_URL}/${this.selected[0]._id}`,{headers:{"If-Match":this.selected[0]._etag}})
           .then(response => {
             console.log(response);
+            this.showSuccess(`Genero ${this.selected[0].nome} excluido!`);
           })
           .catch(error => {
-            console.log(error)
+            console.log(error);
+            this.showError(`Erro ao excluir ${this.selected[0].nome}`);
           })
           .finally(() => {
             this.getItemsByPageNumber(1);
@@ -240,6 +246,20 @@
       },
       changePage(page) {
         this.getItemsByPageNumber(page);
+      },
+      showError(msg) {
+         this.$bvToast.toast(`${msg}`, {
+          title: 'Erro',
+          autoHideDelay: 4000,
+          variant: 'danger'
+        });
+      },
+      showSuccess(msg) {
+        this.$bvToast.toast(`${msg}`, {
+          title: 'Sucesso',
+          autoHideDelay: 4000,
+          variant: 'success'
+        })
       }
     }
   }
