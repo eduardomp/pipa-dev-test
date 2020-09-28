@@ -89,8 +89,7 @@
         >
       
           <form id="form-crud">
-            <label for="nome"/>
-            <input id="nome" type="text" v-model="nome"/> 
+            <input id="nome" type="text" v-model="nome" placeholder="Insira o nome do genero..."/>
           </form>
       
         <template v-slot:modal-footer="{ ok, cancel, close }">
@@ -273,4 +272,9 @@
   .mt-10 {
     margin-top:10px;
   }
+
+  #form-crud input {
+    width: 100%;
+  }
+  
 </style>

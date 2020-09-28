@@ -12,7 +12,7 @@
 
     <div class="row mt-50">
 
-       <div class="col-sm d-flex justify-content-start">
+       <div class="col-sm-6 d-flex justify-content-start">
         <b-form-group
           label=""
           label-cols-sm="0"
@@ -25,11 +25,11 @@
               v-model="filter"
               type="search"
               id="filterInput"
-              placeholder="Procurar por..."
-              :formatter="searchFormatter"
+              placeholder="Busque por... "
+              @keyup="handleSearch"
             ></b-form-input>
             <b-input-group-append>
-              <b-button :disabled="!filter" @click="filter = ''">Limpar</b-button>
+              <b-button :disabled="!filter" @click="clearSearch">Limpar</b-button>
             </b-input-group-append>
           </b-input-group>
         </b-form-group>
@@ -76,27 +76,30 @@
 
     <div>
       <b-modal 
-        ref="modal-crud"
+        id="modal-crud"
         title="Banda"
         header-bg-variant="dark"
         body-bg-variant="dark"
         footer-bg-variant="dark"
         header-text-variant="light"
         body-text-variant="light"
+        @ok="salvar"
         @cancel="excluir"
-        @hide="cancelar"
+        @hide="handleHideModal"
         >
       
-        <p>{{ (selected.length > 0)? selected[0].first_name:''}}</p>
+          <form id="form-crud">
+            <input id="nome" type="text" v-model="nome" placeholder="Insira o nome da banda..."/> 
+          </form>
       
-        <template v-slot:modal-footer="{ ok, cancel, hide }">
-          <b-button size="sm" variant="success" @click="ok()">
+        <template v-slot:modal-footer="{ ok, cancel, close }">
+          <b-button size="sm" variant="success" @click="ok">
             Salvar
           </b-button>
-          <b-button size="sm" variant="danger" @click="cancel()">
+          <b-button size="sm" variant="danger" @click="cancel">
             Excluir
           </b-button>
-          <b-button size="sm" variant="secondary" @click="hide()">
+          <b-button size="sm" variant="secondary" @click="close">
             Cancelar
           </b-button>
         </template>
@@ -107,64 +110,159 @@
 </template>
 
 <script>
+ import axios from 'axios';
+
+ const API_URL = 'http://localhost:5000/banda'; 
+
  export default {
     mounted () {
-      console.log('componenete de pagina')
+      this.getItemsByPageNumber(1);
     },
     data() {
       return {
-        fields:['first_name'],
-        items: [
-          { age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
-          { age: 21, first_name: 'Larsen', last_name: 'Shaw' },
-          { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
-          { age: 38, first_name: 'Jami', last_name: 'Carney' },
-          { age: 40, first_name: 'Dickerson', last_name: 'Madonald' },
-          { age: 21, first_name: 'Larsen', last_name: 'Shaw' },
-          { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
-          { age: 38, first_name: 'Jami', last_name: 'Carney' },
-          { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
-          { age: 38, first_name: 'Jami', last_name: 'Carney' },
-        ],
+        fields:['codigo','nome','genero','pais'],
+        items: [],
         filter: '',
         isBusy: false,
-        selected: [],
+        nome:"",
+        selected: [{"nome":"","genero":"","pais":""}],
         currentPage: 1,
-        totalItems: 20,
-        paginationDisabled: false
+        totalItems: 0,
+        paginationDisabled: false 
       }
     },
     methods: {
-      searchFormatter(value) {
-        console.log("valor da busca",value);
-        return value;
+      getItems(queryString) {
+        this.isBusy = true;
+
+        axios
+          .get(`${API_URL}?max_results=10&${queryString}`)
+          .then(response => {
+            this.items = response.data._items;
+            this.totalItems = response.data._meta.total;
+          })
+          .catch(error => {
+            console.log(error)
+            this.showError(`Erro ao recuperar bandas!`)
+          })
+          .finally(() => {
+            this.isBusy = false;
+            (this.items.length === 0)? this.paginationDisabled = true : this.paginationDisabled = false;
+          })
+      },
+      getItemsByPageNumber(page) {
+        this.getItems(`page=${page}`);
+        this.currentPage = page;
+      },
+      clearSearch() {
+        this.filter = '';
+        this.getItemsByPageNumber(1);  
+      },
+      handleSearch($event) {
+        if($event.code === "Enter"){
+          
+          if($event.target.value){
+            
+            let term = $event.target.value;
+            
+            let querystring = `page=1&max_results=10&where={"$or":[{"codigo":"${term}"},{"nome":{"$regex":".*${term}.*","$options":"i"}}]}`;
+          
+            this.getItems(querystring);
+         
+            return;
+          }
+         
+         this.getItemsByPageNumber(1);
+
+        }
       },
       handleSelectItem(item) {
-        this.selected = item;
-        this.showModal();
+        if(item && item.length > 0){
+          this.selected = item;
+          this.nome = this.selected[0]?.nome;
+          this.genero = this.selected[0]?.genero;
+          this.pais = this.selected[0]?.pais;
+          this.showModal();
+        }
+      },
+      handleHideModal() {
+        this.$refs.table.clearSelected();
       },
       addNew(){
+        this.nome = "";
+        this.genero = "";
+        this.pais =  "";
         this.selected = [];
         this.showModal();
       },
       showModal() {
-        this.$refs['modal-crud'].show()
-      },
-      hideModal() {
-        this.$refs['modal-crud'].hide()
+        this.$bvModal.show("modal-crud");
       },
       salvar(){
-        console.log('salvar...');
+        if(this.selected && this.selected.length > 0 && this.selected[0].codigo){
+          axios
+          .patch(`${API_URL}/${this.selected[0]._id}`,{"nome":this.nome,"genero":this.genero,"pais":this.pais},{headers:{"If-Match":this.selected[0]._etag}})
+          .then(response => {
+            console.log(response);
+            this.showSuccess(`Banda atualizada!`);
+          })
+          .catch(error => {
+            console.log(error)
+            this.showError(`Erro ao atualizar!`);
+          })
+          .finally(() => {
+            this.getItemsByPageNumber(1);
+          })
+ 
+          return;
+        }
+        
+        axios
+          .post(`${API_URL}`,{"nome":this.nome,"genero":this.genero,"pais":this.pais})
+          .then(response => {
+            console.log(response);
+            this.showSuccess(`Banda ${this.nome} cadastrada!`);
+          })
+          .catch(error => {
+            console.log(error)
+            this.showError(`Erro ao cadastrar ${this.nome}`);
+          })
+          .finally(() => {
+            this.getItemsByPageNumber(1);
+          })
+
       },
       excluir(){
-        console.log('excluir...');
-      },
-      cancelar(){
-        console.log('cancelar...');
-        this.hideModal();
+        axios
+          .delete(`${API_URL}/${this.selected[0]._id}`,{headers:{"If-Match":this.selected[0]._etag}})
+          .then(response => {
+            console.log(response);
+            this.showSuccess(`Banda ${this.selected[0].nome} excluida!`);
+          })
+          .catch(error => {
+            console.log(error);
+            this.showError(`Erro ao excluir ${this.selected[0].nome}`);
+          })
+          .finally(() => {
+            this.getItemsByPageNumber(1);
+          })
       },
       changePage(page) {
-        console.log('Page selected:',page);
+        this.getItemsByPageNumber(page);
+      },
+      showError(msg) {
+         this.$bvToast.toast(`${msg}`, {
+          title: 'Erro',
+          autoHideDelay: 4000,
+          variant: 'danger'
+        });
+      },
+      showSuccess(msg) {
+        this.$bvToast.toast(`${msg}`, {
+          title: 'Sucesso',
+          autoHideDelay: 4000,
+          variant: 'success'
+        })
       }
     }
   }
@@ -178,6 +276,9 @@
   .mt-10 {
     margin-top:10px;
   }
-</style>ready: function () {
-    this.onLoad('message from child!')
+
+  #form-crud input {
+    width: 100%;
   }
+  
+</style>
