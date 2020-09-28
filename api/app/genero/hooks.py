@@ -58,5 +58,19 @@ def on_insert_genero(items):
     
     return items
 
+def on_delete_item_genero(item):
+    """
+        Hook de pre delecao dos generos musicais.
+
+        Este hook deleta as bandas associadas ao genero excluido antes de excluir o genero        
+    """
+    bandaCollection = app.data.driver.db['banda']
+
+    bandaCollection.delete_many({"genero":item.get('_id')})
+
+    return item
+
+
 #adicionando os hooks a lista de hooks a serem registrados
+HOOKS.append(on_delete_item_genero)
 HOOKS.append(on_insert_genero)
