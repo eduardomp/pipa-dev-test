@@ -153,6 +153,7 @@
       },
       getItemsByPageNumber(page) {
         this.getItems(`page=${page}`);
+        this.currentPage = page;
       },
       clearSearch() {
         this.filter = '';
@@ -178,7 +179,6 @@
       },
       handleSelectItem(item) {
         if(item && item.length > 0){
-          console.log("selected",item);
           this.selected = item;
           this.nome = this.selected[0]?.nome;
           this.showModal();
@@ -197,7 +197,6 @@
       },
       salvar(){
         if(this.selected && this.selected.length > 0 && this.selected[0].codigo){
-          console.log("UPDATE");
           axios
           .patch(`${API_URL}/${this.selected[0]._id}`,{"nome":this.nome},{headers:{"If-Match":this.selected[0]._etag}})
           .then(response => {
@@ -227,10 +226,19 @@
 
       },
       excluir(){
-        console.log('excluir...');
+        axios
+          .delete(`${API_URL}/${this.selected[0]._id}`,{headers:{"If-Match":this.selected[0]._etag}})
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error)
+          })
+          .finally(() => {
+            this.getItemsByPageNumber(1);
+          })
       },
       changePage(page) {
-        console.log('Page selected:',page);
         this.getItemsByPageNumber(page);
       }
     }
