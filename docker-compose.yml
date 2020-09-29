@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  mongo:
+    image: "mongo"
+    ports:
+      - 27017:27017
+  front:
+    build:
+        context: ./frontend
+    ports:
+      - 8080:80
+    environment:
+      VUE_APP_API_BASE_URL: localhost
+  api:      
+    build:
+        context: ./api
+    ports:
+        - 5000:5000
+    environment:
+        MONGO_HOST: mongo
+        TZ: "America/Sao_Paulo"

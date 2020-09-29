@@ -18,6 +18,8 @@ WORKDIR /app
 
 COPY . .
 
+ENV VUE_APP_API_BASE_URL=localhost
+
 RUN cd /app && \
     yarn install && \
     yarn build

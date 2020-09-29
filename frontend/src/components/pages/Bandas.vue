@@ -151,8 +151,8 @@
 
 <script>
  import axios from 'axios';
-
- const BASE_URL = 'http://localhost:5000'; 
+ 
+ const BASE_URL = `http://${process.env.VUE_APP_API_BASE_URL}:5000`; 
  const DOMAIN = '/banda'; 
  const API_URL = `${BASE_URL}${DOMAIN}`; 
  

@@ -112,7 +112,7 @@
 <script>
  import axios from 'axios';
 
- const API_URL = 'http://localhost:5000/genero'; 
+ const API_URL = `http://${process.env.VUE_APP_API_BASE_URL}:5000/genero`; 
 
  export default {
     mounted () {

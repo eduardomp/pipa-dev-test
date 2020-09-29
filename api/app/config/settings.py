@@ -2,8 +2,8 @@ import os
 from .. import DOMAIN
 
 __default_settings = {
-    'MONGO_HOST': 'localhost',
-    'MONGO_PORT': 27017,
+    'MONGO_HOST': os.environ.get('MONGO_HOST','localhost'),
+    'MONGO_PORT': os.environ.get('MONGO_PORT',27017),
     'MONGO_DBNAME': 'api',
     'RESOURCE_METHODS': ['GET', 'POST', 'DELETE'],
     'ITEM_METHODS': ['GET', 'PATCH', 'PUT', 'DELETE'],

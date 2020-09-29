@@ -114,7 +114,7 @@
 <script>
   import axios from 'axios';
 
-  const BASE_URL = 'http://localhost:5000'; 
+  const BASE_URL = `http://${process.env.VUE_APP_API_BASE_URL}:5000`; 
   const GENERO = '/genero';
   const PAIS = '/pais';
   const BANDA = '/banda';
